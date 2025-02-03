@@ -1,0 +1,16 @@
+{
+    "default": {
+        "test-library": {
+            "baseline": "1.0.0",
+            "port-version": 0
+        },
+        "obcstcmsg": {
+            "baseline": "1.0.0",
+            "port-version": 0
+        },
+        "safetymodule-headers": {
+            "baseline": "1.0.0",
+            "port-version": 0
+        }
+    }
+}
