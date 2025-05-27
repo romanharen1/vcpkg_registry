@@ -1,6 +1,6 @@
 {
   "name": "test-library",
-  "version": "1.0.7",
+  "version": "1.0.0",
   "description": "Description of your library.",
   "dependencies": [
     {
