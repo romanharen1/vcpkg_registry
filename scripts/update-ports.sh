@@ -6,8 +6,8 @@ REPO_URL=$1     # Ex: empresa/minha-biblioteca
 VERSION=$2      # Ex: v1.3.0
 
 LIB_NAME=$(basename "$REPO_URL")
-PORT_DIR="ports/${LIB_NAME}"
-VERSIONS_DIR="versions/b-${LIB_NAME:0:1}"
+PORT_DIR="../ports/${LIB_NAME}"
+VERSIONS_DIR="versions/t-${LIB_NAME:0:1}"
 VERSION_FILE="${VERSIONS_DIR}/${LIB_NAME}.json"
 
 echo "Atualizando port ${LIB_NAME} para versão ${VERSION}"
