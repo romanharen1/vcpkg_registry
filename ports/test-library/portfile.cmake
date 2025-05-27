@@ -3,9 +3,9 @@ set(VCPKG_POLICY_SKIP_COPYRIGHT_SET enabled)
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO romanharen1/test-library
-    REF v1.0.0
+    REF v0.0.1
     SHA512
-    HEAD_REF main
+    HEAD_REF v0.0.1
 )
 
 vcpkg_cmake_configure(SOURCE_PATH "${SOURCE_PATH}")

@@ -1,8 +1,7 @@
 {
-    "default": {
-        "test-library": {
-            "baseline": "1.0.0",
-            "port-version": 0
-        }
+  "default": {
+    "test-library": {
+      "baseline": "v0.0.1"
     }
+  }
 }
