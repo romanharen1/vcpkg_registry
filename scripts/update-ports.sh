@@ -4,10 +4,11 @@ set -e
 
 REPO_URL=$1     # Ex: empresa/minha-biblioteca
 VERSION=$2      # Ex: v1.3.0
+PORT_VERSION=0
 
 LIB_NAME=$(basename "$REPO_URL")
 PORT_DIR="../ports/${LIB_NAME}"
-VERSIONS_DIR="../versions/-${LIB_NAME:0:1}"
+VERSIONS_DIR="../versions/${LIB_NAME:0:1}-"
 VERSION_FILE="${VERSIONS_DIR}/${LIB_NAME}.json"
 
 echo "Atualizando port ${LIB_NAME} para versão ${VERSION}"
@@ -45,7 +46,7 @@ mkdir -p "${VERSIONS_DIR}"
 
 # Se já existir o arquivo, preserva as versões anteriores
 if [[ -f "${VERSION_FILE}" ]]; then
-  jq ".versions += [{\"version\": \"${VERSION#v.}\", \"git-tree\": \"${GIT_TREE}\"}]" \
+  jq ".versions += [{\"version\": \"${VERSION#v.}\", \"port-version\": \"{$PORT_VERSION}\" ,\"git-tree\": \"${GIT_TREE}\"}]" \
     "${VERSION_FILE}" > "${VERSION_FILE}.tmp"
 else
   cat <<EOF > "${VERSION_FILE}.tmp"
@@ -53,6 +54,7 @@ else
   "versions": [
     {
       "version": "${VERSION#v.}",
+      "port-version": "${PORT_VERSION}",
       "git-tree": "${GIT_TREE}"
     }
   ]
