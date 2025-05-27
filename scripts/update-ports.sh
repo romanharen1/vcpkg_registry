@@ -66,14 +66,14 @@ if [[ -f "${BASELINE_FILE}" ]]; then
   if [[ "${PORT_VERSION}" -gt 0 ]]; then
     # port-version > 0: precisa adicionar
     jq --arg lib "${LIB_NAME}" \
-       --arg ver "${VERSION}" \
+       --arg ver "${VERSION#v}" \
        --argjson pver "${PORT_VERSION}" \
        '.default[$lib] = { "baseline": $ver, "port-version": $pver }' \
        "${BASELINE_FILE}" > "${BASELINE_FILE}.tmp"
   else
     # Sem port-version
     jq --arg lib "${LIB_NAME}" \
-       --arg ver "${VERSION}" \
+       --arg ver "${VERSION#v}" \
        '.default[$lib] = { "baseline": $ver }' \
        "${BASELINE_FILE}" > "${BASELINE_FILE}.tmp"
   fi
@@ -85,7 +85,7 @@ else
   "default": {
     "${LIB_NAME}": {
       "baseline": "${VERSION_SEMVER}",
-      "port-version": ${PORT_VERSION}
+      "port-version": "${PORT_VERSION}"
     }
   }
 }
@@ -95,7 +95,7 @@ EOF
 {
   "default": {
     "${LIB_NAME}": {
-      "baseline": "${VERSION}"
+      "baseline": "${VERSION#v}"
     }
   }
 }
