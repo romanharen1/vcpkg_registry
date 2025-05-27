@@ -4,7 +4,6 @@ set -e
 
 REPO_URL=$1     # Ex: empresa/minha-biblioteca
 VERSION=$2      # Ex: v1.3.0
-PORT_VERSION=1 # Versão do port, incrementa se necessário
 
 LIB_NAME=$(basename "$REPO_URL")
 PORT_DIR="../ports/${LIB_NAME}"
@@ -60,23 +59,53 @@ mv "${VERSION_FILE}.tmp" "${VERSION_FILE}"
 
 echo "Atualizando baseline em ${BASELINE_FILE}"
 
+# Define port-version; default é 0 se não definido
+PORT_VERSION=${PORT_VERSION:-0}
+
 if [[ -f "${BASELINE_FILE}" ]]; then
-  jq --arg lib "${LIB_NAME}" --arg ver "${VERSION#v}", \"port-version\": \"${PORT_VERSION}\" ,\
-    '.default[$lib] = $ver' "${BASELINE_FILE}" > "${BASELINE_FILE}.tmp"
+  if [[ "${PORT_VERSION}" -gt 0 ]]; then
+    # port-version > 0: precisa adicionar
+    jq --arg lib "${LIB_NAME}" \
+       --arg ver "${VERSION}" \
+       --argjson pver "${PORT_VERSION}" \
+       '.default[$lib] = { "baseline": $ver, "port-version": $pver }' \
+       "${BASELINE_FILE}" > "${BASELINE_FILE}.tmp"
+  else
+    # Sem port-version
+    jq --arg lib "${LIB_NAME}" \
+       --arg ver "${VERSION}" \
+       '.default[$lib] = { "baseline": $ver }' \
+       "${BASELINE_FILE}" > "${BASELINE_FILE}.tmp"
+  fi
 else
-  cat <<EOF > "${BASELINE_FILE}.tmp"
+  # baseline.json não existe, criar
+  if [[ "${PORT_VERSION}" -gt 0 ]]; then
+    cat <<EOF > "${BASELINE_FILE}.tmp"
 {
   "default": {
-    "${LIB_NAME}": "${VERSION#v}"
-    "port-version": "${PORT_VERSION}"
+    "${LIB_NAME}": {
+      "baseline": "${VERSION_SEMVER}",
+      "port-version": ${PORT_VERSION}
+    }
   }
 }
 EOF
+  else
+    cat <<EOF > "${BASELINE_FILE}.tmp"
+{
+  "default": {
+    "${LIB_NAME}": {
+      "baseline": "${VERSION}"
+    }
+  }
+}
+EOF
+  fi
 fi
 
 mv "${BASELINE_FILE}.tmp" "${BASELINE_FILE}"
 
-echo "Baseline atualizado com ${LIB_NAME}: ${VERSION_SEMVER}"
+echo "Baseline atualizado: ${LIB_NAME} ${VERSION} (port-version: ${PORT_VERSION})"
 # Limpeza
 rm -rf "$TMP_DIR"
 
