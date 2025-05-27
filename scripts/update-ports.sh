@@ -28,7 +28,7 @@ echo "Hash do tar.gz: $TAR_HASH"
 cd -
 
 echo "Atualizando portfile.cmake"
-sed -i "s|REF .*|REF ${VERSION}|" "${PORT_DIR}/portfile.cmake"
+sed -i "s|^\(REF[[:space:]]\+\).*|\1${VERSION}|" "${PORT_DIR}/portfile.cmake"
 sed -i "s|SHA512 .*|SHA512 ${TAR_HASH}|" "${PORT_DIR}/portfile.cmake"
 
 echo "Atualizando vcpkg.json"
