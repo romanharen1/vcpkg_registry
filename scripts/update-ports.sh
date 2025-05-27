@@ -4,7 +4,7 @@ set -e
 
 REPO_URL=$1     # Ex: empresa/minha-biblioteca
 VERSION=$2      # Ex: v1.3.0
-PORT_VERSION=0
+PORT_VERSION=1 # Versão do port, incrementa se necessário
 
 LIB_NAME=$(basename "$REPO_URL")
 PORT_DIR="../ports/${LIB_NAME}"
@@ -46,14 +46,14 @@ mkdir -p "${VERSIONS_DIR}"
 
 # Se já existir o arquivo, preserva as versões anteriores
 if [[ -f "${VERSION_FILE}" ]]; then
-  jq ".versions += [{\"version\": \"${VERSION#v.}\", \"port-version\": \"${PORT_VERSION}\" ,\"git-tree\": \"${GIT_TREE}\"}]" \
+  jq ".versions += [{\"version\": \"${VERSION#v}\", \"port-version\": \"${PORT_VERSION}\" ,\"git-tree\": \"${GIT_TREE}\"}]" \
     "${VERSION_FILE}" > "${VERSION_FILE}.tmp"
 else
   cat <<EOF > "${VERSION_FILE}.tmp"
 {
   "versions": [
     {
-      "version": "${VERSION#v.}",
+      "version": "${VERSION#v}",
       "port-version": "${PORT_VERSION}",
       "git-tree": "${GIT_TREE}"
     }
