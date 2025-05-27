@@ -3,7 +3,7 @@ set(VCPKG_POLICY_SKIP_COPYRIGHT_SET enabled)
 vcpkg_from_git(
     OUT_SOURCE_PATH SOURCE_PATH
     URL https://github.com/romanharen1/test-library.git
-    REF v1.0.4
+    REF v.1.0.5
 )
 
 vcpkg_cmake_configure(SOURCE_PATH "${SOURCE_PATH}")
