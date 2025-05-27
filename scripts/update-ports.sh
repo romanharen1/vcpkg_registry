@@ -46,7 +46,7 @@ mkdir -p "${VERSIONS_DIR}"
 
 # Se já existir o arquivo, preserva as versões anteriores
 if [[ -f "${VERSION_FILE}" ]]; then
-  jq ".versions += [{\"version\": \"${VERSION#v.}\", \"port-version\": \"{$PORT_VERSION}\" ,\"git-tree\": \"${GIT_TREE}\"}]" \
+  jq ".versions += [{\"version\": \"${VERSION#v.}\", \"port-version\": \"${PORT_VERSION}\" ,\"git-tree\": \"${GIT_TREE}\"}]" \
     "${VERSION_FILE}" > "${VERSION_FILE}.tmp"
 else
   cat <<EOF > "${VERSION_FILE}.tmp"
