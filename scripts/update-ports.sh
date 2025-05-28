@@ -23,12 +23,10 @@ TAR_HASH=$(curl -L -s "${TAR_URL}" | sha512sum | cut -d' ' -f1)
 echo "Hash do tar.gz: $TAR_HASH"
 
 cd -
-GIT_TREE=$(git rev-parse HEAD:ports/${LIB_NAME})
-if [[ -z "$GIT_TREE" ]]; then
-  echo "Erro: Não foi possível encontrar a árvore do git para o diretório ports/${LIB_NAME}."
-  exit 1
-fi
+
+GIT_TREE=$(git rev-parse HEAD)
 echo "SHA da árvore: $GIT_TREE"
+
 echo "Atualizando portfile.cmake"
 sed -i "s/^\(\s*REF\s\).*/\1${VERSION}/" "$PORT_DIR/portfile.cmake"
 sed -i "s|SHA512 .*|SHA512 ${TAR_HASH}|" "${PORT_DIR}/portfile.cmake"
@@ -36,6 +34,12 @@ sed -i "s|SHA512 .*|SHA512 ${TAR_HASH}|" "${PORT_DIR}/portfile.cmake"
 echo "Atualizando vcpkg.json"
 jq ".version = \"${VERSION#v}\"" "${PORT_DIR}/vcpkg.json" > "${PORT_DIR}/vcpkg_tmp.json"
 mv "${PORT_DIR}/vcpkg_tmp.json" "${PORT_DIR}/vcpkg.json"
+
+git add "${PORT_DIR}/portfile.cmake" "${PORT_DIR}/vcpkg.json"
+git commit -m "Atualiza ${LIB_NAME} para versão ${VERSION} (port-version: ${PORT_VERSION})"
+
+GIT_TREE=$(git rev-parse HEAD:"${PORT_DIR}")
+echo "SHA do diretório do port: $GIT_TREE"
 
 echo "Atualizando versioning file: ${VERSION_FILE}"
 mkdir -p "${VERSIONS_DIR}"
@@ -58,6 +62,8 @@ EOF
 fi
 
 mv "${VERSION_FILE}.tmp" "${VERSION_FILE}"
+echo "Versionfile atualizado: ${LIB_NAME} ${VERSION} (port-version: ${PORT_VERSION})"
+git add "${VERSION_FILE}"
 
 echo "Atualizando baseline em ${BASELINE_FILE}"
 
@@ -105,7 +111,12 @@ fi
 mv "${BASELINE_FILE}.tmp" "${BASELINE_FILE}"
 
 echo "Baseline atualizado: ${LIB_NAME} ${VERSION} (port-version: ${PORT_VERSION})"
+git add "${BASELINE_FILE}"
+
 # Limpeza
 rm -rf "$TMP_DIR"
+
+echo "Commitando alterações"
+git commit --ammend --no-edit
 
 echo "Atualização completa para ${LIB_NAME} versão ${VERSION}"
