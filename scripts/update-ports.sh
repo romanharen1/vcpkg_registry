@@ -84,7 +84,7 @@ else
 {
   "default": {
     "${LIB_NAME}": {
-      "baseline": "${VERSION_SEMVER}",
+      "baseline": "${VERSION#v}",
       "port-version": "${PORT_VERSION}"
     }
   }
