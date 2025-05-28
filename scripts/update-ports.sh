@@ -121,6 +121,6 @@ git add "${BASELINE_FILE}"
 rm -rf "$TMP_DIR"
 
 echo "Commitando alterações"
-git commit --ammend --no-edit
+git commit --amend --no-edit
 git push
 echo "Atualização completa para ${LIB_NAME} versão ${VERSION}"
