@@ -18,20 +18,17 @@ TMP_DIR=$(mktemp -d)
 git clone --depth 1 --branch "${VERSION}" "https://github.com/${REPO_URL}.git" "$TMP_DIR"
 
 cd "$TMP_DIR"
+TAR_URL="https://github.com/${REPO_URL}/archive/refs/tags/${VERSION}.tar.gz"
+TAR_HASH=$(curl -L -s "${TAR_URL}" | sha512sum | cut -d' ' -f1)
+echo "Hash do tar.gz: $TAR_HASH"
 
+cd -
 GIT_TREE=$(git rev-parse HEAD:ports/${LIB_NAME})
 if [[ -z "$GIT_TREE" ]]; then
   echo "Erro: Não foi possível encontrar a árvore do git para o diretório ports/${LIB_NAME}."
   exit 1
 fi
 echo "SHA da árvore: $GIT_TREE"
-
-TAR_URL="https://github.com/${REPO_URL}/archive/refs/tags/${VERSION}.tar.gz"
-TAR_HASH=$(curl -L -s "${TAR_URL}" | sha512sum | cut -d' ' -f1)
-echo "Hash do tar.gz: $TAR_HASH"
-
-cd -
-
 echo "Atualizando portfile.cmake"
 sed -i "s/^\(\s*REF\s\).*/\1${VERSION}/" "$PORT_DIR/portfile.cmake"
 sed -i "s|SHA512 .*|SHA512 ${TAR_HASH}|" "${PORT_DIR}/portfile.cmake"
