@@ -19,7 +19,11 @@ git clone --depth 1 --branch "${VERSION}" "https://github.com/${REPO_URL}.git" "
 
 cd "$TMP_DIR"
 
-GIT_TREE=$(git rev-parse HEAD^{tree})
+GIT_TREE=$(git rev-parse HEAD:ports/${LIB_NAME})
+if [[ -z "$GIT_TREE" ]]; then
+  echo "Erro: Não foi possível encontrar a árvore do git para o diretório ports/${LIB_NAME}."
+  exit 1
+fi
 echo "SHA da árvore: $GIT_TREE"
 
 TAR_URL="https://github.com/${REPO_URL}/archive/refs/tags/${VERSION}.tar.gz"
