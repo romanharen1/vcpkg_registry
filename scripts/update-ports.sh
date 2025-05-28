@@ -4,6 +4,7 @@ set -e
 
 REPO_URL=$1     # Ex: empresa/minha-biblioteca
 VERSION=$2      # Ex: v1.3.0
+PORT_VERSION=${PORT_VERSION:-0}
 
 LIB_NAME=$(basename "$REPO_URL")
 PORT_DIR="../ports/${LIB_NAME}"
@@ -28,7 +29,7 @@ echo "Hash do tar.gz: $TAR_HASH"
 cd -
 
 echo "Atualizando portfile.cmake"
-sed -i "s|^\(REF[[:space:]]\+\).*|\1${VERSION}|" "${PORT_DIR}/portfile.cmake"
+sed -i "s/^\s*REF\s\+.*/REF ${VERSION}/" "$PORT_DIR/portfile.cmake"
 sed -i "s|SHA512 .*|SHA512 ${TAR_HASH}|" "${PORT_DIR}/portfile.cmake"
 
 echo "Atualizando vcpkg.json"
@@ -58,9 +59,6 @@ fi
 mv "${VERSION_FILE}.tmp" "${VERSION_FILE}"
 
 echo "Atualizando baseline em ${BASELINE_FILE}"
-
-# Define port-version; default é 0 se não definido
-PORT_VERSION=${PORT_VERSION:-0}
 
 if [[ -f "${BASELINE_FILE}" ]]; then
   if [[ "${PORT_VERSION}" -gt 0 ]]; then
