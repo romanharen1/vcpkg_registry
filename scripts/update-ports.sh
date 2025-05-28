@@ -1,8 +1,12 @@
 #!/bin/bash
+git config user.name "GitHub Actions"
+git config user.email "actions@github.com"
+# Script para atualizar um port no vcpkg
+# Uso: ./update-ports.sh <repo-url> <version> [port-version]
 
 set -e
 
-REPO_URL=$1     # Ex: empresa/minha-biblioteca
+REPO_URL=$1     # Ex: foo/minha-biblioteca
 VERSION=$2      # Ex: v1.3.0
 PORT_VERSION=${PORT_VERSION:-0}
 
